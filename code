@@ -1,0 +1,117 @@
+Public Class Form1
+    Dim x, i, j, p As Integer, flag As Boolean, n As String
+    Private Sub Button1_Click(sender As System.Object, e As System.EventArgs) Handles Button1.Click
+        Dim strEncrypted As String = ""
+        x = Len(txtPlain.Text)
+        Dim a() As String = {"а", "б", "в", "г", "д", "е", "ё", "ж", "з", "и", "й", "к", "л", "м", "н", "о", "п", "р", "с", "т", "у", "ф", "х", "ц", "ч", "ш", "щ", "ъ", "ы", "ь", "э", "ю", "я"}
+        Dim b() As String = {"А", "Б", "В", "Г", "Д", "Е", "Ё", "Ж", "З", "И", "Й", "К", "Л", "М", "Н", "О", "П", "Р", "С", "Т", "У", "Ф", "Х", "Ц", "Ч", "Ш", "Щ", "Ъ", "Ы", "Ь", "Э", "Ю", "Я"}
+        Dim c() As String = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"}
+
+        If Val(sdvig.Text) > 33 Or Val(sdvig.Text) = 0 Then
+            MsgBox("Значение ключа задано неверно! Величина ключа от 1 до 33!", MsgBoxStyle.Critical, Title:="Внимание!")
+            txtEncrypted.Text = ""
+        ElseIf sdvig.Text = "" Then
+            MsgBox("Значение ключа не задано!", MsgBoxStyle.Critical, Title:="Внимание!")
+            txtEncrypted.Text = ""
+        Else
+            If RadioButton1.Checked = True Then
+                txtEncrypted.Text = ""
+                For i = 1 To x
+                    p = Val(sdvig.Text)
+
+                    n = (Mid(txtPlain.Text, i, 1))
+                    flag = True
+
+                    For j = 0 To 32
+                        If n = a(j) And flag = True Then
+                            If (j + p) >= 33 Then
+                                n = b(j + p - 33)
+                                flag = False
+                            Else
+                                n = b(j + p)
+                                flag = False
+                            End If
+
+                        Else
+                            If n = b(j) And flag = True Then
+                                If (j + p) >= 33 Then
+                                    n = b(j + p - 33)
+                                    flag = False
+                                Else
+                                    n = b(j + p)
+                                    flag = False
+                                End If
+
+                            End If
+                        End If
+
+                    Next
+
+                    txtEncrypted.Text = txtEncrypted.Text + n
+                Next
+
+            ElseIf RadioButton2.Checked = True Then
+                txtEncrypted.Text = ""
+                x = Len(txtPlain.Text)
+                For i = 1 To x
+                    p = Val(sdvig.Text)
+
+                    n = (Mid(txtPlain.Text, i, 1))
+                    flag = True
+
+                    For j = 0 To 32
+                        If n = a(j) And flag = True Then
+                            If (j - p) < 0 Then
+                                n = b(j - p + 33)
+                                flag = False
+                            Else
+                                n = b(j - p)
+                                flag = False
+                            End If
+
+                        Else
+                            If n = b(j) And flag = True Then
+                                If (j - p) < 0 Then
+                                    n = b(j - p + 33)
+                                    flag = False
+                                Else
+                                    n = b(j - p)
+                                    flag = False
+                                End If
+
+                            End If
+                        End If
+
+                    Next
+
+                    txtEncrypted.Text = txtEncrypted.Text + n
+                Next
+            End If
+            End If
+    End Sub
+
+    Private Sub RadioButton1_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles RadioButton1.CheckedChanged
+        Button1.Text = "Зашифровать"
+        GroupBox2.Text = "Исходный текст"
+        GroupBox1.Text = "Зашифрованный текст"
+    End Sub
+
+    Private Sub RadioButton2_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles RadioButton2.CheckedChanged
+        Button1.Text = "Расшифровать"
+        GroupBox1.Text = "Исходный текст"
+        GroupBox2.Text = "Зашифрованный текст"
+    End Sub
+
+    Private Sub openf_Click(sender As Object, e As EventArgs) Handles openf.Click
+        Dim opa As New OpenFileDialog
+        opa.Title = "Открытие файла"
+        opa.InitialDirectory = "c:\"
+        opa.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*"
+        opa.FilterIndex = 2
+        opa.RestoreDirectory = True
+        If opa.ShowDialog() = System.Windows.Forms.DialogResult.OK Then
+            txtPlain.Text = My.Computer.FileSystem.ReadAllText(opa.FileName, System.Text.Encoding.Default)
+            flag = False
+        End If
+    End Sub
+END CLASS
